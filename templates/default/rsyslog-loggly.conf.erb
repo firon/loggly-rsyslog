@@ -26,7 +26,7 @@ $InputFilePollInterval <%= node['loggly']['rsyslog']['input_file_poll_interval']
 <% end %>
 
 $template LogglyFormat,"<%%pri%>%protocol-version% %timestamp:::date-rfc3339% %HOSTNAME% %app-name% %procid% %msgid% [<%= @token %>@41058 <%= @tags %>] %msg%\n"
-$template LogglyFormatNginx,"<%%pri%>%protocol-version% %timestamp:::date-rfc3339% %HOSTNAME% %app-name% %procid% %msgid% [<%= @token %>@41058 tag="nginx"] %msg%\n"
+$template LogglyFormatNginx,"<%%pri%>%protocol-version% %timestamp:::date-rfc3339% %HOSTNAME% %app-name% %procid% %msgid% [<%= @token %>@41058 tag=nginx] %msg%\n"
 
 <% if node['loggly']['tls']['enabled'] %>
 $DefaultNetstreamDriverCAFile <%= node['loggly']['tls']['cert_path'] %>/loggly_full.crt
@@ -37,8 +37,8 @@ $ActionSendStreamDriverPermittedPeer *.loggly.com
 <% end %>
 
 if $programname == 'nginx-access' then @@<%= node['loggly']['rsyslog']['host'] %>:<%= node['loggly']['rsyslog']['port'] %>;LogglyFormatNginx
-if $programname == 'nginx-access' then ~
+if $programname == 'nginx-access' then stop
 if $programname == 'nginx-error' then @@<%= node['loggly']['rsyslog']['host'] %>:<%= node['loggly']['rsyslog']['port'] %>;LogglyFormatNginx
-if $programname == 'nginx-error' then ~
+if $programname == 'nginx-error' then stop
 
 *.* @@<%= node['loggly']['rsyslog']['host'] %>:<%= node['loggly']['rsyslog']['port'] %>;LogglyFormat
